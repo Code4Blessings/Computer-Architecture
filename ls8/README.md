@@ -67,9 +67,11 @@ but you'll have to implement those three above instructions first!
 
 * Write a short 3-10-word description of what each file does.
 
-- The examples folder - 
+- The examples folder - contains a list of programs that we will be working with
+- The cpu file - communicates with the RAM (Random Access Memory) through the memory bus
 
 * Note what has been implemented, and what hasn't.
+  
 * Read this whole file.
 * Skim the spec.
 

@@ -7,28 +7,43 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        self.ram = [] * 256
+        self.reg = [] * 8
+        self.pc =  0
+
+
 
     def load(self):
         """Load a program into memory."""
-
+        
         address = 0
+
+        with open(sys.argv[1]) as f:
+            for line in f:
+                string_val = line.split("#")[0].strip()
+                if string_val == '':
+                    continue
+                v = int(string_val, 2) 
+                #print(v)
+                self.ram[address] = v
+                address += 1
+
 
         # For now, we've just hardcoded a program:
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+        # program = [
+        #     # From print8.ls8
+        #     0b10000010, # LDI R0,8
+        #     0b00000000,
+        #     0b00001000,
+        #     0b01000111, # PRN R0
+        #     0b00000000,
+        #     0b00000001, # HLT
+        # ]
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        # for instruction in program:
+        #     self.ram[address] = instruction
+        #     address += 1
 
 
     def alu(self, op, reg_a, reg_b):
@@ -62,4 +77,19 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        LDI = 0b10000010
+        while True:
+           IR = self.ram[self.pc]
+           if IR == LDI:
+               operand_a = self.ram[self.pc + 1] #Address
+               operand_b = self.ram[self.pc + 2] #Value or integer
+               self.reg[operand_a] = operand_b
+               self.pc += 3
+               
+
+    def ram_read(self, address):
+        return self.ram[address]
+
+    def ram_write(self, value, address):
+        self.ram[address] = value
+
