@@ -78,18 +78,37 @@ class CPU:
     def run(self):
         """Run the CPU."""
         LDI = 0b10000010
-        while True:
-           IR = self.ram[self.pc]
-           if IR == LDI:
-               operand_a = self.ram[self.pc + 1] #Address
-               operand_b = self.ram[self.pc + 2] #Value or integer
-               self.reg[operand_a] = operand_b
-               self.pc += 3
-               
+        HLT = 0b00000001
+        PRN = 0b01000111
 
-    def ram_read(self, address):
-        return self.ram[address]
+        running = True
 
-    def ram_write(self, value, address):
-        self.ram[address] = value
+        while running:
+            IR = self.ram[self.pc]
+            if IR == HLT:
+                running == False
+                self.pc += 1
+            
+            elif IR == LDI:
+                operand_a = self.ram[self.pc + 1]  # Address
+                operand_b = self.ram[self.pc + 2]  # Value or integer
+                self.reg[operand_a] = operand_b
+                self.pc += 3
+
+            elif IR == PRN:
+                reg_a = self.ram[self.pc + 1]
+                print(self.reg[reg_a])
+
+
+
+            
+            
+
+
+
+    def ram_read(self, mar): #Memory Address Register--Address
+        return self.ram[mar]
+
+    def ram_write(self, mdr, mar): #Memory Data Register--Value
+        self.ram[mar] = mdr
 
