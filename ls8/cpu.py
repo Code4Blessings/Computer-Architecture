@@ -7,8 +7,8 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        self.ram = [] * 256
-        self.reg = [] * 8
+        self.ram = [0] * 256
+        self.reg = [0] * 8
         self.pc =  0
 
 
@@ -17,14 +17,14 @@ class CPU:
         """Load a program into memory."""
         
         address = 0
-
+        #print(sys.argv)
         with open(sys.argv[1]) as f:
             for line in f:
                 string_val = line.split("#")[0].strip()
                 if string_val == '':
                     continue
                 v = int(string_val, 2) 
-                #print(v)
+                #print(string_val, v)
                 self.ram[address] = v
                 address += 1
 
@@ -52,6 +52,10 @@ class CPU:
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
         #elif op == "SUB": etc
+
+        elif op == "MUL":
+            self.reg[reg_a] *= self.reg[reg_b]
+        
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -80,30 +84,32 @@ class CPU:
         LDI = 0b10000010
         HLT = 0b00000001
         PRN = 0b01000111
+        MUL = 0b10100010
 
         running = True
 
         while running:
             IR = self.ram[self.pc]
+            print(IR, self.pc)
             if IR == HLT:
-                running == False
-                self.pc += 1
+                running = False
             
             elif IR == LDI:
                 operand_a = self.ram[self.pc + 1]  # Address
                 operand_b = self.ram[self.pc + 2]  # Value or integer
                 self.reg[operand_a] = operand_b
-                self.pc += 3
+                self.pc += 3 #Update the pc
 
             elif IR == PRN:
                 reg_a = self.ram[self.pc + 1]
                 print(self.reg[reg_a])
+                self.pc += 2
 
-
-
-            
-            
-
+            elif IR == MUL:
+                reg_a = self.ram[self.pc + 1]
+                reg_b = self.ram[self.pc + 2]
+                self.alu("MUL", reg_a, reg_b)
+                self.pc += 3
 
 
     def ram_read(self, mar): #Memory Address Register--Address
