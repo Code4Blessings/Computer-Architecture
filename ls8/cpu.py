@@ -85,6 +85,7 @@ class CPU:
         PUSH = 0b01000101
         POP = 0b01000110
         SP = 7
+        CALL = 0b01010000
 
         running = True
         self.reg[SP] = 0xF4
@@ -130,6 +131,18 @@ class CPU:
                 reg_a = self.ram[self.pc + 1]
                 self.reg[SP] += 1
                 self.pc += 2
+            
+            elif IR == CALL:
+                # 1. The address of the ** *instruction*** _directly after_ `CALL` is
+                # pushed onto the stack. 
+                address = self.pc + 2
+                self.reg[SP] -= 1
+                self.ram[self.reg[SP]] = address
+                # This allows us to return to where we left off when the subroutine finishes executing.
+                # 2. The PC is set to the address stored in the given register. 
+                self.pc = self.ram[self.pc + 1]  
+                # We jump to that location in RAM and execute the first instruction in the subroutine. 
+                #The PC can move forward or backwards from its current location.
 
 
 
