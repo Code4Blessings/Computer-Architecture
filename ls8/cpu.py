@@ -86,13 +86,14 @@ class CPU:
         POP = 0b01000110
         SP = 7
         CALL = 0b01010000
+        RET = 0b00010001
 
         running = True
         self.reg[SP] = 0xF4
 
         while running:
             IR = self.ram[self.pc]
-            print(IR, self.pc)
+            #print(IR, self.pc)
             if IR == HLT:
                 running = False
             
@@ -132,19 +133,24 @@ class CPU:
                 self.reg[SP] += 1
                 self.pc += 2
             
-            elif IR == CALL:
-                # 1. The address of the ** *instruction*** _directly after_ `CALL` is
-                # pushed onto the stack. 
-                address = self.pc + 2
-                self.reg[SP] -= 1
-                self.ram[self.reg[SP]] = address
-                # This allows us to return to where we left off when the subroutine finishes executing.
-                # 2. The PC is set to the address stored in the given register. 
-                self.pc = self.ram[self.pc + 1]  
-                # We jump to that location in RAM and execute the first instruction in the subroutine. 
-                #The PC can move forward or backwards from its current location.
+            # elif IR == CALL:
+            #     return_addr = self.pc + 2
+            #     # Push it on the stack
+            #     self.reg[SP] -= 1
+            #     top_of_stack_addr = self.reg[SP]
+            #     self.ram[top_of_stack_addr] = return_addr
+            #     # Set the PC to the subroutine addr
+            #     reg_a = self.ram[self.pc + 1]
+            #     subroutine_addr = self.reg[reg_a]
+            #     self.pc = subroutine_addr
 
-
+            # elif IR == RET:
+            #     # Pop the return addr off stack
+            #     top_of_stack_addr = self.reg[SP]
+            #     return_addr = self.ram[top_of_stack_addr]
+            #     self.reg[SP] += 1
+            #     # Store it in the PC
+            #     self.pc = return_addr
 
     def ram_read(self, mar): #Memory Address Register--Address
         return self.ram[mar]
