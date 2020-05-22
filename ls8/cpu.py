@@ -11,8 +11,6 @@ class CPU:
         self.reg = [0] * 8
         self.pc =  0
 
-
-
     def load(self):
         """Load a program into memory."""
         
@@ -27,7 +25,6 @@ class CPU:
                 #print(string_val, v)
                 self.ram[address] = v
                 address += 1
-
 
         # For now, we've just hardcoded a program:
 
@@ -85,8 +82,12 @@ class CPU:
         HLT = 0b00000001
         PRN = 0b01000111
         MUL = 0b10100010
+        PUSH = 0b01000101
+        POP = 0b01000110
+        SP = 7
 
         running = True
+        self.reg[SP] = 0xF4
 
         while running:
             IR = self.ram[self.pc]
@@ -110,6 +111,26 @@ class CPU:
                 reg_b = self.ram[self.pc + 2]
                 self.alu("MUL", reg_a, reg_b)
                 self.pc += 3
+
+            elif IR == PUSH: #e.g. PUSH R3
+                #1. Decrement the `SP`.
+                self.reg[SP] -= 1
+                #2. Get the register #
+                reg_a = self.ram[self.pc + 1]
+                #3. Get the value out of the register
+                value = self.reg[reg_a]
+                #4. # Store value in memory at SP
+                top_of_stack_addr = self.reg[SP]
+                self.ram[top_of_stack_addr] = value
+                self.pc += 2
+
+            elif IR == POP:
+                top_of_stack_addr = self.reg[SP]
+                value = self.ram[top_of_stack_addr]
+                reg_a = self.ram[self.pc + 1]
+                self.reg[SP] += 1
+                self.pc += 2
+
 
 
     def ram_read(self, mar): #Memory Address Register--Address
